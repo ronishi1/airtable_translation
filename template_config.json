@@ -1,0 +1,16 @@
+{
+  "apiKey":"APIKEY HERE",
+  "baseURL":"AIRTABLE BASE URL HERE",
+  "pathToGoogleFile":"./google-services.json",
+  "maxRecords":5,
+  "charsToTranslate":150,
+  "maxTranslateLength":5000,
+  "tables":[
+    {
+      "name":"Food Pantries",
+      "languages":["Spanish"],
+      "fieldsToTranslate":["Additional Notes"],
+      "lastUpdatedName":"Last Updated FPC"
+    }
+  ]
+}
