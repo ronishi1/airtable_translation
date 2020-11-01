@@ -6,7 +6,7 @@ var async = require('async');
 var base = new Airtable({apiKey: config["apiKey"]}).base(config["baseURL"]);
 process.env.GOOGLE_APPLICATION_CREDENTIALS=config["pathToGoogleFile"];
 const {Translate} = require('@google-cloud/translate').v2;
-const translate = new Translate({projectId:'share-meals-dev'});
+const translate = new Translate({projectId:'projectid_here'});
 
 const langObj = {
   Spanish: 'es',
