@@ -8,6 +8,8 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS=config["pathToGoogleFile"];
 const {Translate} = require('@google-cloud/translate').v2;
 const translate = new Translate({projectId:'projectid_here'});
 
+const update_chunk_size = 10;
+
 const langObj = {
   Spanish: 'es',
   Chinese: 'zh',
@@ -153,22 +155,21 @@ function build_update(translateArr,resultArr,language,table){
 }
 
 function update_airtable(updateArr,table){
-  chunk = 3;
-  let allChunks = [];
-  for (i=0;i<updateArr.length;i+=chunk) {
-    temp= updateArr.slice(i,i+chunk);
-    allChunks.push(temp);
-  }
-
-  allChunks.forEach((chunk) => {
-    base(table).update(chunk, function(err, records) {
-      if (err) {
-        console.error(err);
-        return;
-      };
-      console.log("done " + table);
-  });
-  })
+    let allChunks = [];
+    for (i=0;i<updateArr.length;i+= update_chunk_size) {
+	temp= updateArr.slice(i,i+ update_chunk_size);
+	allChunks.push(temp);
+    }
+    
+    allChunks.forEach((chunk) => {
+	base(table).update(chunk, function(err, records) {
+	    if (err) {
+		console.error(err);
+		return;
+	    };
+	});
+    })
+    console.log("done " + table);
 }
 config["tables"].forEach(table => {
   table["languages"].forEach(language => {
