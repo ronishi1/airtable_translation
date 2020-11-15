@@ -45,7 +45,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
   let flagStr = "";
   let filterStr = "OR(";
   fieldsToTranslate.forEach(field => {
-    filterStr += "NOT({" + field + "} = BLANK()),";
+    filterStr += "AND(NOT({" + field + "} = BLANK()),NOT(trim({" + field + "}) = \"\")),";
   });
   filterStr = filterStr.substring(0,filterStr.length-1);
   filterStr += ")"
@@ -56,7 +56,8 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
       filterByFormula: `and(search(\"${language}\",{Languages to Translate to}) > 0,or({Last Updated ${language}} = BLANK(),datetime_diff({${lastUpdatedName}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
     }).eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
-
+        console.log(records);
+        // console.log(record["Additional Notes"]);
         fieldsToTranslate.forEach((field) => {
           const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
           if(text != ""){
@@ -160,7 +161,7 @@ function update_airtable(updateArr,table){
 	temp= updateArr.slice(i,i+ update_chunk_size);
 	allChunks.push(temp);
     }
-    
+
     allChunks.forEach((chunk) => {
 	base(table).update(chunk, function(err, records) {
 	    if (err) {
