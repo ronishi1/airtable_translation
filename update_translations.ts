@@ -6,7 +6,7 @@ var async = require('async');
 var base = new Airtable({apiKey: config["apiKey"]}).base(config["baseURL"]);
 process.env.GOOGLE_APPLICATION_CREDENTIALS=config["pathToGoogleFile"];
 const {Translate} = require('@google-cloud/translate').v2;
-const translate = new Translate({projectId:'projectid_here'});
+const translate = new Translate({projectId:'project-id-here'});
 
 const update_chunk_size = 10;
 
@@ -53,15 +53,17 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
     base(table).select({
       maxRecords: config["maxRecords"],
       pageSize:100,
-      filterByFormula: `and(search(\"${language}\",{Languages to Translate to}) > 0,or({Last Updated ${language}} = BLANK(),datetime_diff({${lastUpdatedName}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
+      filterByFormula: `and(search(\"${language}\",
+      {Languages to Translate to}) > 0,
+      or({Last Updated ${language}} = BLANK(),datetime_diff({${lastUpdatedName}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
     }).eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
-        console.log(records);
+        // console.log(records);
         // console.log(record["Additional Notes"]);
         fieldsToTranslate.forEach((field) => {
           const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
           if(text != ""){
-            if(text.length < config["maxTranslateLength"]){
+            if(text.length < config["FPCmaxTranslateLength"]){
               translateArr.push({
                 "id":record["id"],
                 "field":field,
@@ -107,7 +109,7 @@ async function translate_text(translateArr,language,table){
   let numCharsTranslated = 0;
   let numRecordsTranslated = 0;
   translateArr.forEach(element => {
-    if((charCount + element["text"].length) > config["charsToTranslate"]){
+    if((charCount + element["text"].length) > config["googleTranslateCharLimit"]){
       text.push(temp);
       charCount = 0;
       temp = []
@@ -121,17 +123,26 @@ async function translate_text(translateArr,language,table){
   text.push(temp);
   const target = langObj[language];
   let resultArr = [];
+  console.log(translateArr);
   for(var i = 0;i<text.length;i++){
     let arr = text[i];
+    console.log(text);
     let [translations] = await translate.translate(arr, target);
     translations = Array.isArray(translations) ? translations : [translations];
 
     translations.forEach(translation => {
+      // In order to bullet point in airtable, formatting needs to be "- " with the space
+      // Some entries lose the space on translation so this replaces first instance
+      if(translation.substring(0,2) != "- "){
+        translation = "- " + translation.substring(1)
+      }
+      // Replaces any further instances where "- " formatting is not followed
+      translation = translation.replace(/\n-(\S)/g,'\n- $1')
       resultArr.push(translation);
+      console.log(translation);
     });
 
   };
-
   build_update(translateArr,resultArr,language,table);
 }
 
