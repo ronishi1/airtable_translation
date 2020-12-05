@@ -3,8 +3,8 @@
   "baseURL":"AIRTABLE BASE URL HERE",
   "pathToGoogleFile":"./google-services.json",
   "maxRecords":5,
-  "charsToTranslate":150,
-  "maxTranslateLength":5000,
+  "googleTranslateCharLimit":5000,
+  "FPCmaxTranslateLength":350,
   "tables":[
     {
       "name":"Food Pantries",
