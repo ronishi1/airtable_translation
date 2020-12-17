@@ -100,7 +100,7 @@ async function xtranslate_text(translateArr,language,table){
 
 async function translate_text(translateArr,language,table){
   if (translateArr.length == 0){
-    console.log("translate array is empty");
+    console.log("ERROR: translate array is empty");
     return;
   }
   let text = [];
@@ -123,29 +123,51 @@ async function translate_text(translateArr,language,table){
   text.push(temp);
   const target = langObj[language];
   let resultArr = [];
-  console.log(translateArr);
+  //console.log(translateArr);
   for(var i = 0;i<text.length;i++){
     let arr = text[i];
-    console.log(text);
+    //console.log(text);
     let [translations] = await translate.translate(arr, target);
     translations = Array.isArray(translations) ? translations : [translations];
 
     translations.forEach(translation => {
-      // In order to bullet point in airtable, formatting needs to be "- " with the space
-      // Some entries lose the space on translation so this replaces first instance
-      if(translation.substring(0,2) != "- "){
-        translation = "- " + translation.substring(1)
-      }
-      // Replaces any further instances where "- " formatting is not followed
-      translation = translation.replace(/\n-(\S)/g,'\n- $1')
+      // // In order to bullet point in airtable, formatting needs to be "- " with the space
+      // // Some entries lose the space on translation so this replaces first instance
+      // if(translation.substring(0,2) != "- "){
+      //   translation = "- " + translation.substring(1)
+      // }
+      // // Replaces any further instances where "- " formatting is not followed
+      // translation = translation.replace(/\n-(\S)/g,'\n- $1')
+      translation = fixFormatting(translation);
       resultArr.push(translation);
-      console.log(translation);
     });
 
   };
   build_update(translateArr,resultArr,language,table);
 }
 
+function fixFormatting(translation){
+  // In order to bullet point in airtable, formatting needs to be "- " with the space
+  // Some entries lose the space on translation so this replaces first instance
+  if(translation.substring(0,2) != "- "){
+    translation = "- " + translation.substring(1)
+  }
+  // Replaces any further instances where "- " formatting is not followed
+  translation = translation.replace(/\n-(\S)/g,'\n- $1')
+  // Gets rid of spaces for url formatting between [Website] (www.website.com) into [Website](www.website.com) for markdown formatting
+  const markdownURLRegex = /\[([\w\s\d]+)\]\s?\((https?:\/\/[\w\d\s.\/?=#]+)\)/g;
+  let match = markdownURLRegex.exec(translation);
+  let newMD = ''
+  while (match != null) {
+    // match[1] is the content within square brackets
+    // match[2] is the url
+    // newMD is the new markdown with the space between ] and ( stripped and the url stripped of any excess spaces
+    newMD = "[" + match[1] + "](" + match[2].replace(/\s/g, '') + ")";
+    translation = translation.replace(match[0],newMD);
+    match = markdownURLRegex.exec(translation);
+  }
+  return translation;
+}
 function build_update(translateArr,resultArr,language,table){
   let finalUpdateObj = {};
   let updateObj = {}
