@@ -1,5 +1,6 @@
 const config = require("./config.json");
 const fs = require('fs');
+const { WebClient, LogLevel } = require("@slack/web-api");
 
 var Airtable = require('airtable');
 var async = require('async');
@@ -17,29 +18,13 @@ const langObj = {
   Portuguese: 'pt',
 }
 
-// MOST IMPORTANT MOVING FORWARD
-// hours need a different implementation
-// update extra notes for hours e.g. Su 01:00PM-03:00PM "Only every other week" update part in quotes
+// WebClient insantiates a client that can call API methods
+// When using Bolt, you can use either `app.client` or the `client` passed to listeners.
+const client = new WebClient("xoxb-1596529540930-1596590839778-cBnZhlwQQHiPTK18v8NrjdBJ");
+// ID of the channel you want to send the message to
 
-// fill in to config.josn
-//    {
-    //   "name":"Retail Food Stores",
-    //   "languages":["Spanish"],
-    //   "fieldsToTranslate":["Delivery and Additional Notes","Store Hours"],
-    //   "lastUpdatedName":"Last Updated"
-    // }
-// {
-//   "name":"Food Pantries",
-//   "languages":["Spanish"],
-//   "fieldsToTranslate":["Additional Notes","Hours FPC"],
-//   "lastUpdatedName":"Last Updated FPC"
-// },
-// {
-//   "name":"Social Services",
-//   "languages":[],
-//   "fieldsToTranslate":[]
-// },
-function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName){
+
+function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view){
   let translateArr = [];
   let flagRecordArr = [];
   let flagStr = "";
@@ -60,7 +45,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
       records.forEach(function(record) {
         // console.log(records);
         // console.log(record["Additional Notes"]);
-        fieldsToTranslate.forEach((field) => {
+        fieldsToTranslate.forEach(async (field) => {
           const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
           if(text != ""){
             if(text.length < config["FPCmaxTranslateLength"]){
@@ -73,7 +58,18 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
             else {
               // assuming that all tables will have an id field
               fs.appendFileSync('flag_log.csv',`${new Date()},${table},${record.get("id")}\n`);
+              try {
+                // Call the chat.postMessage method using the WebClient
+                const result = await client.chat.postMessage({
+                  channel: config["errorChannelID"],
+                  text: `Automatic Translations \n${language} ${text.length}/${config["FPCmaxTranslateLength"]} https://airtable.com/${table}/${view}/${record["id"]}`,
+                });
 
+                console.log(result);
+              }
+              catch (error) {
+                console.error(error);
+              }
             }
           }
         })
@@ -120,6 +116,18 @@ async function translate_text(translateArr,language,table){
     temp.push(element["text"]);
   });
   fs.appendFileSync('log.csv',`${new Date()},${table},${numRecordsTranslated},${numCharsTranslated}\n`);
+  try {
+    // Call the chat.postMessage method using the WebClient
+    const result = await client.chat.postMessage({
+      channel: config["successChannelID"],
+      text: `Automatic Translations \n ${table} \n Records ${numRecordsTranslated} \n Chars ${numCharsTranslated}`,
+    });
+
+    console.log(result);
+  }
+  catch (error) {
+    console.error(error);
+  }
   text.push(temp);
   const target = langObj[language];
   let resultArr = [];
@@ -210,6 +218,6 @@ function update_airtable(updateArr,table){
 }
 config["tables"].forEach(table => {
   table["languages"].forEach(language => {
-      update_translations(language,table["name"],table["fieldsToTranslate"],[],table["lastUpdatedName"]);
+      update_translations(language,table["tableID"],table["fieldsToTranslate"],[],table["lastUpdatedName"],table["viewID"]);
     });
 });
