@@ -20,7 +20,7 @@ const langObj = {
 
 // WebClient insantiates a client that can call API methods
 // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
-const client = new WebClient("xoxb-1596529540930-1596590839778-cBnZhlwQQHiPTK18v8NrjdBJ");
+const client = new WebClient(config["slackAuth"]);
 // ID of the channel you want to send the message to
 
 
