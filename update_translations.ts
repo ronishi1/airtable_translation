@@ -32,7 +32,7 @@ const client = new WebClient(config["slackAuth"]);
 //   "name":"Food Pantries",
 //   "FPCmaxTranslateLength":350
 // },
-function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view,maxTranslateLength,name){
+function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view,maxTranslateLength,name,maxRecords){
   let translateArr = [];
   let flagRecordArr = [];
   let flagStr = "";
@@ -44,7 +44,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
   filterStr += ")"
   return new Promise((resolve, reject) => {
     base(table).select({
-      maxRecords: config["maxRecords"],
+      maxRecords: maxRecords,
       pageSize:100,
       filterByFormula: `and(search(\"${language}\",
       {Languages to Translate to}) > 0,
@@ -236,6 +236,6 @@ function update_airtable(updateArr,table){
 }
 config["tables"].forEach(table => {
   table["languages"].forEach(language => {
-      update_translations(language,table["tableID"],table["fieldsToTranslate"],[],table["lastUpdatedName"],table["viewID"],table["FPCmaxTranslateLength"],table["name"]);
+      update_translations(language,table["tableID"],table["fieldsToTranslate"],[],table["lastUpdatedName"],table["viewID"],table["FPCmaxTranslateLength"],table["name"],table["maxRecords"]);
     });
 });

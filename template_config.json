@@ -2,7 +2,6 @@
   "apiKey":"APIKEY HERE",
   "baseURL":"AIRTABLE BASE URL HERE",
   "pathToGoogleFile":"./google-services.json",
-  "maxRecords":5,
   "googleTranslateCharLimit":5000,
   "errorChannelID":"CHANNEL ID FOR ERRORS HERE",
   "successChannelID":"CHANNEL ID FOR SUCCESS HERE",
@@ -16,7 +15,8 @@
       "tableID":"id of table",
       "viewID":"view of the table",
       "name":"name of table",
-      "FPCmaxTranslateLength":0
+      "FPCmaxTranslateLength":0,
+      "maxRecords":5
     }
   ]
 }
