@@ -182,9 +182,8 @@ function fixFormatting(translation){
   translation = translation.replace(/\n-(\S)/g,'\n- $1')
   translation = translation.replace(/[「」]/g,"\"")
   translation = translation.replace(/[“”]/g,"\"")
-  console.log(translation);
   // Gets rid of spaces for url formatting between [Website] (www.website.com) into [Website](www.website.com) for markdown formatting
-  const markdownURLRegex = /\[([\w\s\d]+)\]\s?\((https?:\/\/[\w\d\s.\/?=#]+)\)/g;
+  const markdownURLRegex = /\[([\w\s\d]+)\]\s?\((https?:\/\/[^\)]*)\)/g;
   let match = markdownURLRegex.exec(translation);
   let newMD = ''
   while (match != null) {
