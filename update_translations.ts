@@ -23,7 +23,15 @@ const langObj = {
 const client = new WebClient(config["slackAuth"]);
 // ID of the channel you want to send the message to
 
-
+// {
+//   "languages":["Spanish"],
+//   "fieldsToTranslate":["Additional Notes"],
+//   "lastUpdatedName":"Last Updated FPC",
+//   "tableID":"tblotIEHLvSI42pRE",
+//   "viewID":"viwuYaJ2TorlkTSLO",
+//   "name":"Food Pantries",
+//   "FPCmaxTranslateLength":350
+// },
 function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view,maxTranslateLength,name){
   let translateArr = [];
   let flagRecordArr = [];
@@ -55,20 +63,30 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
                 "text":text
               })
             }
+
             else {
               // assuming that all tables will have an id field
-              fs.appendFileSync('flag_log.csv',`${new Date()},${table},${record.get("id")}\n`);
-              try {
-                // Call the chat.postMessage method using the WebClient
-                const result = await client.chat.postMessage({
-                  channel: config["errorChannelID"],
-                  text: `Automatic Translations \n${name}\n${language} ${text.length}/${maxTranslateLength} https://airtable.com/${table}/${view}/${record["id"]}`,
+              if(record.get("Manual Override for Translations")){
+                translateArr.push({
+                  "id":record["id"],
+                  "field":field,
+                  "text":text
                 });
-
-                console.log(result);
               }
-              catch (error) {
-                console.error(error);
+              else {
+                fs.appendFileSync('flag_log.csv',`${new Date()},${table},${record.get("id")}\n`);
+                try {
+                  // Call the chat.postMessage method using the WebClient
+                  const result = await client.chat.postMessage({
+                    channel: config["errorChannelID"],
+                    text: `Automatic Translations \n${name}\n${language} ${text.length}/${maxTranslateLength} https://airtable.com/${table}/${view}/${record["id"]}`,
+                  });
+
+                  console.log(result);
+                }
+                catch (error) {
+                  console.error(error);
+                }
               }
             }
           }
@@ -189,6 +207,7 @@ function build_update(translateArr,resultArr,language,table){
       updateObj["fields"] = {};
       updateObj["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
       updateObj["fields"]["Last Updated " + language] = new Date();
+      updateObj["fields"]["Manual Override for Translations"] = false;
       finalUpdateObj[translateArr[i]["id"]] = updateObj;
     }
     else {

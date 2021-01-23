@@ -15,7 +15,7 @@
       "tableID":"id of table",
       "viewID":"view of the table",
       "name":"name of table",
-      "FPCmaxTranslateLength"
+      "FPCmaxTranslateLength":0
     }
   ]
 }
