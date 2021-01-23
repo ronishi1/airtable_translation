@@ -7,6 +7,7 @@
   "errorChannelID":"CHANNEL ID FOR ERRORS HERE",
   "successChannelID":"CHANNEL ID FOR SUCCESS HERE",
   "slackAuth":"slack auth token here",
+  "overrideName":"column name for override checkbox",
   "tables":[
     {
       "languages":["Spanish"],

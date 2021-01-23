@@ -66,7 +66,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
 
             else {
               // assuming that all tables will have an id field
-              if(record.get("Manual Override for Translations")){
+              if(record.get(config["overrideName"])){
                 translateArr.push({
                   "id":record["id"],
                   "field":field,
@@ -207,7 +207,7 @@ function build_update(translateArr,resultArr,language,table){
       updateObj["fields"] = {};
       updateObj["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
       updateObj["fields"]["Last Updated " + language] = new Date();
-      updateObj["fields"]["Manual Override for Translations"] = false;
+      updateObj["fields"][config["overrideName"]] = false;
       finalUpdateObj[translateArr[i]["id"]] = updateObj;
     }
     else {
