@@ -24,7 +24,7 @@ const client = new WebClient(config["slackAuth"]);
 // ID of the channel you want to send the message to
 
 
-function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view){
+function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view,maxTranslateLength,name){
   let translateArr = [];
   let flagRecordArr = [];
   let flagStr = "";
@@ -48,7 +48,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
         fieldsToTranslate.forEach(async (field) => {
           const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
           if(text != ""){
-            if(text.length < config["FPCmaxTranslateLength"]){
+            if(text.length < maxTranslateLength){
               translateArr.push({
                 "id":record["id"],
                 "field":field,
@@ -62,7 +62,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
                 // Call the chat.postMessage method using the WebClient
                 const result = await client.chat.postMessage({
                   channel: config["errorChannelID"],
-                  text: `Automatic Translations \n${language} ${text.length}/${config["FPCmaxTranslateLength"]} https://airtable.com/${table}/${view}/${record["id"]}`,
+                  text: `Automatic Translations \n${name}\n${language} ${text.length}/${maxTranslateLength} https://airtable.com/${table}/${view}/${record["id"]}`,
                 });
 
                 console.log(result);
@@ -79,7 +79,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
       fetchNextPage();
 
     }, async function done(err) {
-      await translate_text(translateArr,language,table)
+      await translate_text(translateArr,language,table,name)
       resolve();
       if (err) { console.error(err); return; }
     });
@@ -94,7 +94,7 @@ async function xtranslate_text(translateArr,language,table){
   build_update(translateArr,temp,language,table)
 }
 
-async function translate_text(translateArr,language,table){
+async function translate_text(translateArr,language,table,name){
   if (translateArr.length == 0){
     console.log("ERROR: translate array is empty");
     return;
@@ -120,7 +120,7 @@ async function translate_text(translateArr,language,table){
     // Call the chat.postMessage method using the WebClient
     const result = await client.chat.postMessage({
       channel: config["successChannelID"],
-      text: `Automatic Translations \n ${table} \n Records ${numRecordsTranslated} \n Chars ${numCharsTranslated}`,
+      text: `Automatic Translations \n ${name}\n Total Records Translated ${numRecordsTranslated} \n Total Characters Translated ${numCharsTranslated}`,
     });
 
     console.log(result);
@@ -218,6 +218,6 @@ function update_airtable(updateArr,table){
 }
 config["tables"].forEach(table => {
   table["languages"].forEach(language => {
-      update_translations(language,table["tableID"],table["fieldsToTranslate"],[],table["lastUpdatedName"],table["viewID"]);
+      update_translations(language,table["tableID"],table["fieldsToTranslate"],[],table["lastUpdatedName"],table["viewID"],table["FPCmaxTranslateLength"],table["name"]);
     });
 });

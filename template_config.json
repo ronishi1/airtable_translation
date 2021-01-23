@@ -4,7 +4,6 @@
   "pathToGoogleFile":"./google-services.json",
   "maxRecords":5,
   "googleTranslateCharLimit":5000,
-  "FPCmaxTranslateLength":350,
   "errorChannelID":"CHANNEL ID FOR ERRORS HERE",
   "successChannelID":"CHANNEL ID FOR SUCCESS HERE",
   "slackAuth":"slack auth token here",
@@ -14,7 +13,9 @@
       "fieldsToTranslate":["Additional Notes"],
       "lastUpdatedName":"Last Updated FPC",
       "tableID":"id of table",
-      "viewID":"view of the table"
+      "viewID":"view of the table",
+      "name":"name of table",
+      "FPCmaxTranslateLength"
     }
   ]
 }
