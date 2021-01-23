@@ -23,40 +23,31 @@ const langObj = {
 const client = new WebClient(config["slackAuth"]);
 // ID of the channel you want to send the message to
 
-// {
-//   "languages":["Spanish"],
-//   "fieldsToTranslate":["Additional Notes"],
-//   "lastUpdatedName":"Last Updated FPC",
-//   "tableID":"tblotIEHLvSI42pRE",
-//   "viewID":"viwuYaJ2TorlkTSLO",
-//   "name":"Food Pantries",
-//   "FPCmaxTranslateLength":350
-// },
-function update_translations(language,table,fieldsToTranslate,hoursFieldsToTranslate,lastUpdatedName,view,maxTranslateLength,name,maxRecords){
+function update_translations(language,table){
   let translateArr = [];
   let flagRecordArr = [];
   let flagStr = "";
   let filterStr = "OR(";
-  fieldsToTranslate.forEach(field => {
+  table["fieldsToTranslate"].forEach(field => {
     filterStr += "AND(NOT({" + field + "} = BLANK()),NOT(trim({" + field + "}) = \"\")),";
   });
   filterStr = filterStr.substring(0,filterStr.length-1);
   filterStr += ")"
   return new Promise((resolve, reject) => {
-    base(table).select({
-      maxRecords: maxRecords,
+    base(table["tableID"]).select({
+      maxRecords: table["maxRecords"],
       pageSize:100,
       filterByFormula: `and(search(\"${language}\",
       {Languages to Translate to}) > 0,
-      or({Last Updated ${language}} = BLANK(),datetime_diff({${lastUpdatedName}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
+      or({Last Updated ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
     }).eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
         // console.log(records);
         // console.log(record["Additional Notes"]);
-        fieldsToTranslate.forEach(async (field) => {
+        table["fieldsToTranslate"].forEach(async (field) => {
           const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
           if(text != ""){
-            if(text.length < maxTranslateLength){
+            if(text.length < table["FPCmaxTranslateLength"]){
               translateArr.push({
                 "id":record["id"],
                 "field":field,
@@ -79,7 +70,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
                   // Call the chat.postMessage method using the WebClient
                   const result = await client.chat.postMessage({
                     channel: config["errorChannelID"],
-                    text: `Automatic Translations \n${name}\n${language} ${text.length}/${maxTranslateLength} https://airtable.com/${table}/${view}/${record["id"]}`,
+                    text: `Automatic Translations \n${table["name"]}\n${language} ${text.length}/${table["FPCmaxTranslateLength"]} https://airtable.com/${table["tableID"]}/${table["viewID"]}/${record["id"]}`,
                   });
 
                   console.log(result);
@@ -97,7 +88,7 @@ function update_translations(language,table,fieldsToTranslate,hoursFieldsToTrans
       fetchNextPage();
 
     }, async function done(err) {
-      await translate_text(translateArr,language,table,name)
+      await translate_text(translateArr,language,table["tableID"],table["name"])
       resolve();
       if (err) { console.error(err); return; }
     });
@@ -236,6 +227,7 @@ function update_airtable(updateArr,table){
 }
 config["tables"].forEach(table => {
   table["languages"].forEach(language => {
-      update_translations(language,table["tableID"],table["fieldsToTranslate"],[],table["lastUpdatedName"],table["viewID"],table["FPCmaxTranslateLength"],table["name"],table["maxRecords"]);
+      update_translations(language,table);
+
     });
 });
