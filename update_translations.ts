@@ -129,7 +129,7 @@ async function translate_text(translateArr,language,table,name){
     // Call the chat.postMessage method using the WebClient
     const result = await client.chat.postMessage({
       channel: config["successChannelID"],
-      text: `Automatic Translations \n ${name}\n Total Records Translated ${numRecordsTranslated} \n Total Characters Translated ${numCharsTranslated}`,
+      text: `Automatic Translations \n ${name}\n ${language}\n Total Records Translated ${numRecordsTranslated} \n Total Characters Translated ${numCharsTranslated}`,
     });
 
     console.log(result);
