@@ -23,7 +23,7 @@ const langObj = {
 const client = new WebClient(config["slackAuth"]);
 // ID of the channel you want to send the message to
 
-function update_translations(language,table){
+function update_translations(language,table,countID){
   let translateArr = [];
   let flagRecordArr = [];
   let flagStr = "";
@@ -88,22 +88,14 @@ function update_translations(language,table){
       fetchNextPage();
 
     }, async function done(err) {
-      await translate_text(translateArr,language,table["tableID"],table["name"])
+      await translate_text(translateArr,language,table["tableID"],table["name"],countID)
       resolve();
       if (err) { console.error(err); return; }
     });
   })
 }
 
-async function xtranslate_text(translateArr,language,table){
-  let temp = []
-  for(var i = 0;i<translateArr.length;i++){
-    temp[i] = i.toString();
-  }
-  build_update(translateArr,temp,language,table)
-}
-
-async function translate_text(translateArr,language,table,name){
+async function translate_text(translateArr,language,table,name,countID){
   if (translateArr.length == 0){
     console.log("ERROR: translate array is empty");
     return;
@@ -131,8 +123,20 @@ async function translate_text(translateArr,language,table,name){
       channel: config["successChannelID"],
       text: `Automatic Translations \n ${name}\n ${language}\n Total Records Translated ${numRecordsTranslated} \n Total Characters Translated ${numCharsTranslated}`,
     });
-
     console.log(result);
+    const date = new Date();
+    base(countID).create({
+      name:name,
+      date:new Date(),
+      "number of characters translated":numCharsTranslated,
+      "language":language,
+      "number of records":numRecordsTranslated
+    }, function(err, records) {
+  	    if (err) {
+  		console.error(err);
+  		return;
+  	    };
+  	});
   }
   catch (error) {
     console.error(error);
@@ -227,7 +231,7 @@ function update_airtable(updateArr,table){
 }
 config["tables"].forEach(table => {
   table["languages"].forEach(language => {
-      update_translations(language,table);
+      update_translations(language,table,config["countTableID"]);
 
     });
 });
