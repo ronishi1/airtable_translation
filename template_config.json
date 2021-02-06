@@ -1,5 +1,5 @@
 {
-  "apiKey":"APIKEY HERE",
+  "apiKeyAirtable":"APIKEY HERE FOR AIRTABLE HERE",
   "baseURL":"AIRTABLE BASE URL HERE",
   "pathToGoogleFile":"./google-services.json",
   "googleTranslateCharLimit":5000,
@@ -8,6 +8,8 @@
   "slackAuth":"slack auth token here",
   "overrideName":"column name for override checkbox",
   "countTableID":"table id to keep track of total characters translated monthly",
+  "googleMonthlyCutoff":.9,
+  "apiKeyIBM":"APIKEY FOR IBM HERE",
   "tables":[
     {
       "languages":["Spanish"],
