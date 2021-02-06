@@ -98,6 +98,11 @@ function update_translations(language,table,countID){
 async function translate_text(translateArr,language,table,name,countID){
   if (translateArr.length == 0){
     console.log("ERROR: translate array is empty");
+    fs.appendFileSync('log.csv',`${new Date()},${table},0,0\n`);
+    const result = await client.chat.postMessage({
+      channel: config["successChannelID"],
+      text: `Automatic Translations \n ${name}\n ${language}\n Total Records Translated 0 \n Total Characters Translated 0`,
+    });
     return;
   }
   let text = [];
