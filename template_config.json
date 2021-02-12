@@ -10,6 +10,7 @@
   "countTableID":"table id to keep track of total characters translated monthly",
   "googleMonthlyCutoff":.9,
   "apiKeyIBM":"APIKEY FOR IBM HERE",
+  "translationSourceName":"name for translation source in count table",
   "tables":[
     {
       "languages":["Spanish"],

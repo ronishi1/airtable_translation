@@ -53,12 +53,14 @@ function update_translations(language,table,countID){
     base(table["tableID"]).select({
       maxRecords: table["maxRecords"],
       pageSize:100,
+      // ARRAYJOIN is used to convert the lookup column into a string so that we can search
+      // airtable has some difference between a list and lookup lists that prevents search from working properly
       filterByFormula: `and(search(\"${language}\",
-      {Languages to Translate to}) > 0,
+      ARRAYJOIN({languages})) > 0,
       or({Last Updated ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
     }).eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
-        // console.log(records);
+        // console.log(record.get("languages"))
         // console.log(record["Additional Notes"]);
         table["fieldsToTranslate"].forEach(async (field) => {
           const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
@@ -113,7 +115,7 @@ function update_translations(language,table,countID){
       }).eachPage(function page(records, fetchNextPage) {
 
           records.forEach(function(record) {
-              if(record.get("translation source") == "IBM"){
+              if(record.get(config["translation source"]) == "IBM"){
                 sumIBM += record.get("number of characters translated");
               }
               else {
