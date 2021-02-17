@@ -3,6 +3,7 @@
     "@google-cloud/translate": "^6.0.3",
     "@slack/web-api": "^6.0.0",
     "airtable": "^0.10.1",
-    "async": "^3.2.0"
+    "async": "^3.2.0",
+    "ibm-watson": "^6.0.2"
   }
 }
