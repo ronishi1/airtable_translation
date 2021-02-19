@@ -115,7 +115,7 @@ function update_translations(language,table,countID){
       }).eachPage(function page(records, fetchNextPage) {
 
           records.forEach(function(record) {
-              if(record.get(config["translation source"]) == "IBM"){
+              if(record.get(config["translationSourceColumnName"]) == "IBM"){
                 sumIBM += record.get("number of characters translated");
               }
               else {
@@ -179,14 +179,15 @@ async function translate_text_ibm(translateArr,language,table,name,countID){
       text: `Automatic Translations \n ${name}\n ${language}\nIBM \nTotal Records Translated ${numRecordsTranslated} \n Total Characters Translated ${numCharsTranslated}`,
     });
     const date = new Date();
-    base(countID).create({
+    let countObj = {
       name:name,
       date:new Date(),
       "number of characters translated":numCharsTranslated,
       "language":language,
       "number of records":numRecordsTranslated,
-      "translation source":"IBM"
-    }, function(err, records) {
+    }
+    countObj[config["translationSourceColumnName"]] = "IBM";
+    base(countID).create(countObj, function(err, records) {
   	    if (err) {
   		console.error(err);
   		return;
@@ -261,14 +262,15 @@ async function translate_text_google(translateArr,language,table,name,countID){
       text: `Automatic Translations \n ${name}\n ${language}\nGoogle \nTotal Records Translated ${numRecordsTranslated} \n Total Characters Translated ${numCharsTranslated}`,
     });
     const date = new Date();
-    base(countID).create({
+    let countObj = {
       name:name,
       date:new Date(),
       "number of characters translated":numCharsTranslated,
       "language":language,
       "number of records":numRecordsTranslated,
-      "translation source":"Google"
-    }, function(err, records) {
+    }
+    countObj[config["translationSourceColumnName"]] = "Google";
+    base(countID).create(countObj, function(err, records) {
   	    if (err) {
   		console.error(err);
   		return;
