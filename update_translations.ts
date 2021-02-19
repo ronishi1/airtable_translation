@@ -5,6 +5,22 @@ const { WebClient, LogLevel } = require("@slack/web-api");
 const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
 const { IamAuthenticator } = require('ibm-watson/auth');
 
+// FUTURE TODO
+// * ADD INTO CONFIG THE NAME OF THE LOOKUP FOR TRANSLATION
+// * DOCUMENTATION: LIST NEEDED ACCOUNTS => (ibm accounts, google translate accounts, airtable, firebase, slack)
+// * put url to all things listed above + instructions on what needs to be enabled
+// * estimate of cost (based on num of translations)
+// * config file explained => each item is concisely explained
+// * how to setup airtable (need fields like last updated, translation sources etc)
+// * include topdown explanation of how script works (e.g. last updated compared to last updated spanish)
+// * manual overrides explained
+// * all formatting issues that were dealt with (quotations, markdown urls, markdown bullet points) (could be more issues)
+
+// consider open sourcing after this
+
+// For logs, slack can likely keep track of about at least a years worth of logs
+// Slack holds 10000 messages at a time (all channels combined)
+
 // version in generating IBM translation may need to be updated (read below)
 // https://cloud.ibm.com/apidocs/language-translator?code=node#versioning
 const languageTranslator = new LanguageTranslatorV3({
@@ -33,6 +49,7 @@ const langObj = {
 }
 
 const unsupportedIBM = ['Haitian Creole']
+
 
 // WebClient insantiates a client that can call API methods
 // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
