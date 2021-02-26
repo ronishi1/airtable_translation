@@ -10,7 +10,7 @@
   "countTableID":"table id to keep track of total characters translated monthly",
   "googleMonthlyCutoff":.9,
   "apiKeyIBM":"APIKEY FOR IBM HERE",
-  "translationSourceColumnName":"name for translation source in count table",
+  "IBMserviceURL":"service url for ibm here https://cloud.ibm.com/apidocs/language-translator?code=node#endpoint-cloud",
   "tables":[
     {
       "languages":["Spanish"],
