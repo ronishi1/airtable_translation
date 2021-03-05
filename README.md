@@ -15,4 +15,9 @@ Create or login to your [IBM Cloud](https://www.ibm.com/cloud) account.
 ### Google Translation
 https://cloud.google.com/translate/docs/setup
 
+### Firebase Functions
+
 ## npm/config related section here
+
+## pricing section
+
