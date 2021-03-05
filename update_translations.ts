@@ -8,7 +8,8 @@ class Translator{
   // guide for moving to firebase functions
   // inside functions folder for firebase
   // FUTURE TODO
-  // * ADD INTO CONFIG THE NAME OF THE LOOKUP FOR TRANSLATION
+  // * ADD INTO CONFIG THE NAME OF THE LOOKUP FOR TRANSLATION (current setup okay for now, generalize maybe later)
+  // * ? Change format of the column (possibly)
   // * DOCUMENTATION: LIST NEEDED ACCOUNTS => (ibm accounts, google translate accounts, airtable, firebase, slack)
   // * put url to all things listed above + instructions on what needs to be enabled
   // * estimate of cost (based on num of translations)
@@ -18,6 +19,17 @@ class Translator{
   // * manual overrides explained
   // * all formatting issues that were dealt with (quotations, markdown urls, markdown bullet points) (could be more issues)
 
+  // https://support.airtable.com/hc/en-us/articles/218324867-Can-I-make-my-own-templates-
+
+  // https://cloud.google.com/translate/docs/setup
+
+  // ibm
+  // create an account @ https://www.ibm.com/cloud
+  // https://cloud.ibm.com/apidocs/language-translator?code=node
+
+  // slack
+  // https://slack.com/help/articles/115005265703-Create-a-bot-for-your-workspace#add-a-bot-user
+  // For later, incorporate hours translation into it
   // consider open sourcing after this
 
   // For logs, slack can likely keep track of about at least a years worth of logs
@@ -72,7 +84,7 @@ class Translator{
         // airtable has some difference between a list and lookup lists that prevents search from working properly
         filterByFormula: `and(search(\"${language}\",
         ARRAYJOIN({languages})) > 0,
-        or({Last Updated ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{Last Updated ${language}},\'s\') > 0),${filterStr})`
+        or({${table["lastUpdatedName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedName"]} ${language}},\'s\') > 0),${filterStr})`
       }).eachPage(function page(records, fetchNextPage) {
         records.forEach(function(record) {
           table["fieldsToTranslate"].forEach(async (field) => {
@@ -139,10 +151,10 @@ class Translator{
         }, async (err) => {
           // googleMonthlyCutoff is the percentage of google's maximum character limit to translate to
           if(sumGoogle > 500000 * this.config["googleMonthlyCutoff"] && !(this.unsupportedIBM.includes(language))){
-            await this.translate_text_ibm(translateArr,language,table["tableID"],table["name"],countID)
+            await this.translate_text_ibm(translateArr,language,table,table["name"],countID)
           }
           else {
-            await this.translate_text_google(translateArr,language,table["tableID"],table["name"],countID)
+            await this.translate_text_google(translateArr,language,table,table["name"],countID)
           }
           if (err) { console.error(err); return; }
         });
@@ -334,7 +346,9 @@ class Translator{
         updateObj["id"] = translateArr[i]["id"];
         updateObj["fields"] = {};
         updateObj["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
-        updateObj["fields"]["Last Updated " + language] = new Date();
+        // TODO:
+        // Check if we need to generalize Last Updated + Language since we specify last updated in config
+        updateObj["fields"][table["lastUpdatedName"] + " " + language] = new Date();
         updateObj["fields"][this.config["overrideName"]] = false;
         finalUpdateObj[translateArr[i]["id"]] = updateObj;
       }
@@ -355,7 +369,7 @@ class Translator{
     }
 
     allChunks.forEach((chunk) => {
-      this.base(table).update(chunk, function(err, records) {
+      this.base(table["tableID"]).update(chunk, function(err, records) {
         if (err) {
           console.error(err);
           return;
