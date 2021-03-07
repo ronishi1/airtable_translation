@@ -8,11 +8,11 @@ Create or login to your [Airtable](https://airtable.com/) account. Once you have
 
 Afterwards, generate or get your API key from [here](https://airtable.com/account) and put it in the section designated in the config.json. It will look like this.
 ```
- "apiKeyAirtable":"Paste your Airtable API key here"
+"apiKeyAirtable":"Paste your Airtable API key here"
 ```
 In addition, visit [here](https://airtable.com/api) and click on the copy of the template you have created. The URL on the API page will be in the format of airtable.com/baseID/api/docs, please copy only the baseID into the relevant section in config.json as seen below.
 ```
-  "baseURL":"Paste your base ID here"
+"baseURL":"Paste your base ID here"
 ```
 
 
@@ -27,5 +27,10 @@ https://cloud.google.com/translate/docs/setup
 
 ### Firebase Functions
 
-## pricing section
+## Costs
+The two services that may incur costs are the translation services. This script uses Google and IBM's cloud translation which each have a monthly limit on the number of characters translated. For google, this capacity is **500,000 characters per month**, and for IBM the capacity is **1,000,000 characters per month**. As of now, the script will first run Google's translation service until config["googleMonthlyCutOff"] * 500,000 characters has been surpassed, at which point it will switch over to IBM. This is done in order to maximize the number of free translations that are possible. 
+
+["Google Pricing"](https://cloud.google.com/translate/pricing)
+
+["IBM Pricing"](https://www.ibm.com/watson/services/language-translator/)
 
