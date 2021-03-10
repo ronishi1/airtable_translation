@@ -15,9 +15,28 @@ In addition, visit [here](https://airtable.com/api) and click on the copy of the
 "baseURL":"Paste your base ID here"
 ```
 
-
 ### Slack
-https://slack.com/help/articles/115005265703-Create-a-bot-for-your-workspace#add-a-bot-user
+Create an account and workspace on [Slack](https://slack.com/). 
+
+After you have created a workspace, navigate [here](https://api.slack.com/apps) and either select your existing app or create a new app with the workspace made earlier.
+
+On the sidebar under features, click on OAuth and Permissions.
+
+Add the bot token scopes chat:write and chat:write:public under the section Scopes. 
+
+Under the section OAuth Tokens & Redirect URLs, generate the Bot User OAuth Token and paste it into config.json as seen below.
+
+```
+"slackAuth":"Paste your bot user OAuth token here"
+```
+Navigate back to your Slack workspace and create a channel for server logs. Click on the channel and copy the channelID part from the URL https://app.slack.com/client/teamID/channelID. It will start with a C. Paste this channelID into the section of config.json as seen below.
+```
+"successChannelID":"Paste the channel ID for logs here"
+```
+Create another channel for error logs and do the same as above but paste it into the errorChannelID
+```
+"errorChannelID":"CHANNEL ID FOR ERRORS HERE"
+```
 
 ### IBM Translation
 Create or login to your [IBM Cloud](https://www.ibm.com/cloud) account. 
@@ -27,10 +46,16 @@ https://cloud.google.com/translate/docs/setup
 
 ### Firebase Functions
 
+## Running the script
+
+### Running using Firebase Functions
+
+### Running manually
+
 ## Costs
 The two services that may incur costs are the translation services. This script uses Google and IBM's cloud translation which each have a monthly limit on the number of characters translated. For google, this capacity is **500,000 characters per month**, and for IBM the capacity is **1,000,000 characters per month**. As of now, the script will first run Google's translation service until config["googleMonthlyCutOff"] * 500,000 characters has been surpassed, at which point it will switch over to IBM. This is done in order to maximize the number of free translations that are possible. 
 
-["Google Pricing"](https://cloud.google.com/translate/pricing)
+[Google Pricing](https://cloud.google.com/translate/pricing)
 
-["IBM Pricing"](https://www.ibm.com/watson/services/language-translator/)
+[IBM Pricing](https://www.ibm.com/watson/services/language-translator/)
 
