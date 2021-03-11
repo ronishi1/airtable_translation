@@ -16,7 +16,9 @@ In addition, visit [here](https://airtable.com/api) and click on the copy of the
 ```
 
 ### Slack
-Create an account and workspace on [Slack](https://slack.com/). 
+Create an account on [Slack](https://slack.com/). 
+
+Then [create a workspace](https://slack.com/help/articles/206845317-Create-a-Slack-workspace)
 
 After you have created a workspace, navigate [here](https://api.slack.com/apps) and create a new app by selecting the workspace you made earlier.
 
@@ -28,17 +30,27 @@ On the same page under the section **OAuth Tokens & Redirect URLs**, generate a 
 ```
 "slackAuth":"Paste your bot user OAuth token here"
 ```
-Navigate back to your Slack workspace and create a channel for server logs. Click on the channel and the URL will be formatted as https://app.slack.com/client/T012345/C012345. In this case the channel ID will be C012345. Paste this channelID into the section of config.json as seen below.
+Navigate back to your Slack workspace and [create a channel](https://slack.com/help/articles/201402297-Create-a-channel) for server logs. Click on the channel and the URL will be formatted as https://app.slack.com/client/T012345/C012345. In this case the channel ID will be C012345. Paste this channelID into the section of config.json as seen below.
 ```
 "successChannelID":"Paste the channel ID for logs here"
 ```
 Create another channel for error logs and do the same as above but paste it into the errorChannelID
 ```
-"errorChannelID":"CHANNEL ID FOR ERRORS HERE"
+"errorChannelID":"Paste the channel ID for errors here"
 ```
 
 ### IBM Translation
 Create or login to your [IBM Cloud](https://www.ibm.com/cloud) account. 
+
+Go to the [language translator](https://cloud.ibm.com/catalog/services/language-translator) page. Select the location closest to you and the Lite pricing plan, then press create. 
+
+Then navigate to [resources](https://cloud.ibm.com/resources) and click on **Languages Translator** under **Services**. 
+
+Find the **API key** and **service URL** and paste into the section of config.json as seen below
+```
+"apiKeyIBM":"Put in API key for IBM here",
+"IBMserviceURL":Put in the service URL for IBM here"
+```
 
 ### Google Translation
 https://cloud.google.com/translate/docs/setup
