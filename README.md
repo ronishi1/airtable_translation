@@ -10,11 +10,42 @@ Afterwards, generate or get your API key from [here](https://airtable.com/accoun
 ```
 "apiKeyAirtable":"Paste your Airtable API key here"
 ```
-In addition, visit [here](https://airtable.com/api) and click on the copy of the template you have created. In the **Introduction** section, you can find the baseID highlighted in green where it says "The ID of this base is". 
+In addition, visit [here](https://airtable.com/api) and click on the copy of the template you have created. In the **Introduction** section, you can find the baseID highlighted in green where it says "The ID of this base is". Paste it as seen below into config.json.
 ```
 "baseURL":"Paste your base ID here"
 ```
+Then, for every table that you need to translate, you will need to setup the config as follows. This example is based on the [translation template](https://airtable.com/shr2JS2gOlATdwKeD). 
 
+languages is a list of languages that you want to translate to, each language must be surrounded by quotation marks and separated by a comma.
+
+fieldsToTranslate is a list of fields that you want to translate, each field must be surrounded by quotation marks and separated by a comma. 
+
+lastUpdatedName is the name of the column that keeps track of when the record was last updated. 
+
+tableID is the ID of the table that you are trying to translate. You can find this tableID in the URL once you click on the table in the format https://airtable.com/tbl12345/viw12345 where the tableID would be tbl12345.
+
+viewID is the ID of the view for the table that you are trying to translate. You can find this viewID in the URL once you click on the table in the format
+https://airtable.com/tbl12345/viw12345 where the viewID would be viw12345.
+
+name is the name of the table.
+
+FPCmaxTranslateLength is the maximum number of characters that the script will translate for one record, if it's too long it will be flagged and notified on slack.
+
+maxRecords is the maximum number of records that will be translated when the script is ran. 
+```
+"tables":[
+  {
+    "languages":["Spanish","Chinese"],
+    "fieldsToTranslate":["[Field to Translate 1]"],
+    "lastUpdatedName":"[Last Updated]",
+    "tableID":"Paste your tableID here",
+    "viewID":"Paste your viewID here",
+    "name":"Translation Table 1",
+    "FPCmaxTranslateLength":350,
+    "maxRecords":5
+  }
+]
+```
 ### Slack
 Create an account on [Slack](https://slack.com/). 
 
