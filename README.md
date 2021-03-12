@@ -53,16 +53,37 @@ Find the **API key** and **service URL** and paste into the section of config.js
 ```
 
 ### Google Translation
-https://cloud.google.com/translate/docs/setup
+For setting up google cloud translation, follow the steps in the sections **Create or select a project**,**Enable Billing**,**Enabling the API**, and **Create service accounts and keys** in this [guide](https://cloud.google.com/translate/docs/setup). Once you download the JSON following the steps in section **Create service accounts and keys**, move the JSON into the folder of this project, you do not need to modify config for this step. 
 
 ### Firebase Functions
+WIP
 
 ## Running the script
 
 ### Running using Firebase Functions
 
 ### Running manually
+To run the script manually you will need to install node which you can do [here](https://nodejs.org/en/download/)
 
+After installing node, you will need to create a new file (e.g. translator.ts) in this project directory and paste the following code into it.
+```
+const Translator = require("./update_translations.ts")
+const config = require("./config.json");
+let t = new Translator(config);
+t.executeTranslation();
+```
+
+Navigate to this directory in the terminal and run 
+```
+npm install
+```
+in order to install all the dependencies necessary to run this script.
+
+Once that is finished, simply type
+```
+node translator.ts
+```
+in order to run the script manually. 
 ## Costs
 The two services that may incur costs are the translation services. This script uses Google and IBM's cloud translation which each have a monthly limit on the number of characters translated. For google, this capacity is **500,000 characters per month**, and for IBM the capacity is **1,000,000 characters per month**. As of now, the script will first run Google's translation service until config["googleMonthlyCutOff"] * 500,000 characters has been surpassed, at which point it will switch over to IBM. This is done in order to maximize the number of free translations that are possible. 
 
