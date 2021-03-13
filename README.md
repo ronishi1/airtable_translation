@@ -88,6 +88,7 @@ The count table serves to keep track of character counts for the translations. I
 * **translation source** is the service that provided the translation (IBM or Google)
 
 ## Slack
+#### Setting up notifications
 1. Create an account on [Slack](https://slack.com/). 
 
 1. [Create a workspace](https://slack.com/help/articles/206845317-Create-a-Slack-workspace)
@@ -110,6 +111,8 @@ The count table serves to keep track of character counts for the translations. I
     ```
     "errorChannelID":"Paste the channel ID for errors here"
     ```
+
+#### Slack Notification Formatting
 
 ### IBM Translation
 1. Create or login to your [IBM Cloud](https://www.ibm.com/cloud) account. 
@@ -139,12 +142,18 @@ Move the JSON into the folder of this project, you do not need to modify config 
 
 ### Firebase Functions
 https://crontab.guru/
+
 https://stackoverflow.com/questions/58579042/firebase-project-initialization-error-cloud-resource-location-is-not-set-for-th
+
+https://firebase.google.com/docs/functions/get-started
+
 WIP
 
 ## Running the script
 
 ### Running using Firebase Functions
+
+WIP, ADVANCED
 
 ## Costs
 The two services that may incur costs are the translation services. This script uses Google and IBM's cloud translation which each have a monthly limit on the number of characters translated. For google, this capacity is **500,000 characters per month**, and for IBM the capacity is **1,000,000 characters per month**. As of now, the script will first run Google's translation service until config["googleMonthlyCutOff"] * 500,000 characters has been surpassed, at which point it will switch over to IBM. This is done in order to maximize the number of free translations that are possible. 
