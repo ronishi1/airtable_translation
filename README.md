@@ -17,7 +17,7 @@ The script currently only supports **Spanish**,**Chinese**,**Portuguese**, and *
 [Firebase](https://firebase.google.com/) is used to run translations automatically on a schedule (e.g. daily, weekly, etc). 
 
 # Setting up
-To setup this translation script, you will need to follow the setup guides for the following. All API keys, IDs, etc will be stored in a file called config.json. To create it, make a copy template_config.json and rename the file to config.json. In this file, you will be setting all the information needed to get this script working. See below for specifics on setting up all necessary accounts filling out the information for the config.
+To setup this translation script, you will need to follow the setup guides for the following. All API keys, IDs, etc will be stored in a file called **config.json**. To create it, make a copy **template_config.json** and rename the file to **config.json**. In this file, you will be setting all the information needed to get this script working. See below for specifics on setting up all necessary accounts filling out the information for the config.
 
 ## Airtable
 ### Setting up for translation
@@ -66,7 +66,7 @@ https://airtable.com/tbl12345/viw12345 where the viewID would be viw12345.
 ### Tables Format
 
 #### Translation Table 
-The translation table is where all your data will be stored and where the translations will also be pushed to. For this table, any of the fields/columns surrounded by brackets are to be renamed, e.g. [Field to Translate 1] can be renamed to fit the information you are storing in that column (e.g. Additional Notes). Make sure to update the config to match this if you do change the field name. 
+The translation table is where all your data will be stored and where the translations will also be pushed to. For this table, any of the fields/columns surrounded by brackets are to be renamed, [Field to Translate 1] can be renamed to fit the information you are storing in that column (e.g. Additional Notes). Make sure to update the config to match this if you do change the field name. 
 
 * **Name** is the name of the location 
 * **[Field to Translate 1]** is the name of the column that you want to translate
@@ -77,7 +77,7 @@ The translation table is where all your data will be stored and where the transl
 * **languages** is the languages that this record should be translated into. The translation will only happen for a record if the language specified in the config for this table matches one of the languages in this column.
 
 #### Count Table
-The count table serves to keep track of character counts for the translations. It keeps track of how many records and characters were translated for what table and by what service (IBM or Google). 
+The count table serves to keep track of character counts for the translations. It keeps track of how many records and characters were translated for what table and by what service (IBM or Google). These character counts are tracked in order to not go over the free tier limits for IBM or Google. To check if you are near the monthly limit of around **1,500,000 characters**, change the view for this table to **Monthly** in order to see the characters translation for the month.
 
 * **name** is the name of the table that the translations were done in
 * **date** is the date when the translation was executed
