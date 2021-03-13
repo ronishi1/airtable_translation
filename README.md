@@ -10,7 +10,7 @@
 
 [Google Cloud Translation](https://cloud.google.com/translate) is used to provide translation services alongside IBM.
 
-[Firebase](https://firebase.google.com/) is used to schedule when the translations should be run (e.g. daily, weekly, etc). 
+[Firebase](https://firebase.google.com/) is used to run translations automatically on a schedule (e.g. daily, weekly, etc). 
 
 ## Setting up
 To setup this translation script, you will need to follow the setup guides for the following. All API keys, IDs, etc will be stored in a file called config.json. To create it, make a copy template_config.json and rename the file to config.json. In this file, you will be setting all the information needed to get this script working. See below for specifics on setting up all necessary accounts filling out the information for the config.
