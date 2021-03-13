@@ -1,6 +1,10 @@
-# airtable_translation
+# Overview
 
-## Services
+Add in summary for what this script does and what it's for. 
+
+The script currently only supports **Spanish**,**Chinese**,**Portuguese**, and **Haitian Creole**. 
+
+# Services
 
 [Airtable](https://airtable.com/) is used to store all the data and manage it in a spreadsheet format. It will be where all the information will be stored and where all the translations will be pushed to.
 
@@ -12,10 +16,11 @@
 
 [Firebase](https://firebase.google.com/) is used to run translations automatically on a schedule (e.g. daily, weekly, etc). 
 
-## Setting up
+# Setting up
 To setup this translation script, you will need to follow the setup guides for the following. All API keys, IDs, etc will be stored in a file called config.json. To create it, make a copy template_config.json and rename the file to config.json. In this file, you will be setting all the information needed to get this script working. See below for specifics on setting up all necessary accounts filling out the information for the config.
 
-### Airtable
+## Airtable
+### Setting up for translation
 1. Create or login to your [Airtable](https://airtable.com/) account. Once you have created or logged into your account, go to this [template](https://airtable.com/shr2JS2gOlATdwKeD) and click on the **Copy base** button on the top right to create a copy of the template.
 
 1. Generate or get your API key from [here](https://airtable.com/account) and put it in the section designated in the config.json. It will look like this.
@@ -58,7 +63,31 @@ https://airtable.com/tbl12345/viw12345 where the viewID would be viw12345.
   }
 ]
 ```
-### Slack
+### Tables Format
+
+#### Translation Table 
+The translation table is where all your data will be stored and where the translations will also be pushed to. For this table, any of the fields/columns surrounded by brackets are to be renamed, e.g. [Field to Translate 1] can be renamed to fit the information you are storing in that column (e.g. Additional Notes). Make sure to update the config to match this if you do change the field name. 
+
+* **Name** is the name of the location 
+* **[Field to Translate 1]** is the name of the column that you want to translate
+* **[Field to Translate 1] Spanish** is the column where the translations for Spanish would go. If you are translating into any other language make sure to create a column [Field to Translate 1] Chinese, if you are translating into Chinese as well for example.
+* **[Last Updated]** is the name of the column used to keep track of when the record was last changed/updated.
+* **[Last Updated] Spanish** is the column where the time when the record was translated into Spanish would go. Similar to before, if you are translating into any other languages create a column for example called [Last Updated] Chinese if you are translating into Chinese. 
+* **manual translation override** is the column used to mark a record for translation if it was flagged and went over the character limit for translating one record.
+* **languages** is the languages that this record should be translated into. The translation will only happen for a record if the language specified in the config for this table matches one of the languages in this column.
+
+#### Count Table
+The count table serves to keep track of character counts for the translations. It keeps track of how many records and characters were translated for what table and by what service (IBM or Google). 
+
+* **name** is the name of the table that the translations were done in
+* **date** is the date when the translation was executed
+* **number of characters** is the number of characters that were translated
+* **language** is the language that the records were translated into
+* **number of records** is the number of records that were translated
+* **month** is the month when the translation occurred, used to keep track of monthly character counts
+* **translation source** is the service that provided the translation (IBM or Google)
+
+## Slack
 1. Create an account on [Slack](https://slack.com/). 
 
 1. [Create a workspace](https://slack.com/help/articles/206845317-Create-a-Slack-workspace)
