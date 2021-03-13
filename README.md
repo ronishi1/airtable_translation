@@ -138,6 +138,8 @@ Once you download the JSON after step 6, create a copy of it and store it somewh
 Move the JSON into the folder of this project, you do not need to modify config for this step. 
 
 ### Firebase Functions
+https://crontab.guru/
+https://stackoverflow.com/questions/58579042/firebase-project-initialization-error-cloud-resource-location-is-not-set-for-th
 WIP
 
 ## Running the script
