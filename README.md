@@ -16,17 +16,17 @@
 To setup this translation script, you will need to follow the setup guides for the following. All API keys, IDs, etc will be stored in a file called config.json. To create it, make a copy template_config.json and rename the file to config.json. In this file, you will be setting all the information needed to get this script working. See below for specifics on setting up all necessary accounts filling out the information for the config.
 
 ### Airtable
-Create or login to your [Airtable](https://airtable.com/) account. Once you have created or logged into your account, go to this [template](https://airtable.com/shr2JS2gOlATdwKeD) and click on the **Copy base** button on the top right to create a copy of the template.
+1. Create or login to your [Airtable](https://airtable.com/) account. Once you have created or logged into your account, go to this [template](https://airtable.com/shr2JS2gOlATdwKeD) and click on the **Copy base** button on the top right to create a copy of the template.
 
-Afterwards, generate or get your API key from [here](https://airtable.com/account) and put it in the section designated in the config.json. It will look like this.
-```
-"apiKeyAirtable":"Paste your Airtable API key here"
-```
-In addition, visit [here](https://airtable.com/api) and click on the copy of the template you have created. In the **Introduction** section, you can find the baseID highlighted in green where it says "The ID of this base is". Paste it as seen below into config.json.
-```
-"baseURL":"Paste your base ID here"
-```
-Then, for every table that you need to translate, you will need to setup the config as follows. This example is based on the [translation template](https://airtable.com/shr2JS2gOlATdwKeD). 
+1. Generate or get your API key from [here](https://airtable.com/account) and put it in the section designated in the config.json. It will look like this.
+    ```
+    "apiKeyAirtable":"Paste your Airtable API key here"
+    ```
+1. Visit [here](https://airtable.com/api) and click on the copy of the template you have created. In the **Introduction** section, you can find the baseID highlighted in green where it says "The ID of this base is". Paste it as seen below into config.json.
+    ```
+    "baseURL":"Paste your base ID here"
+    ```
+1. For every table that you need to translate, you will need to setup the config as follows. This example is based on the [translation template](https://airtable.com/shr2JS2gOlATdwKeD). 
 
 * **languages** is a list of languages that you want to translate to, each language must be surrounded by quotation marks and separated by a comma.
 
@@ -59,44 +59,50 @@ https://airtable.com/tbl12345/viw12345 where the viewID would be viw12345.
 ]
 ```
 ### Slack
-Create an account on [Slack](https://slack.com/). 
+1. Create an account on [Slack](https://slack.com/). 
 
-Then [create a workspace](https://slack.com/help/articles/206845317-Create-a-Slack-workspace)
+1. [Create a workspace](https://slack.com/help/articles/206845317-Create-a-Slack-workspace)
 
-After you have created a workspace, navigate [here](https://api.slack.com/apps) and create a new app by selecting the workspace you made earlier.
+1. Navigate [here](https://api.slack.com/apps) and create a new app by selecting the workspace you made earlier.
 
-On the sidebar under **Features**, click on **OAuth and Permissions**.
+1. On the sidebar under **Features**, click on **OAuth and Permissions**.
 
-Add the bot token scopes **chat:write** and **chat:write:public** under the section **Scopes**. 
+1. Add the bot token scopes **chat:write** and **chat:write:public** under the section **Scopes**. 
 
-On the same page under the section **OAuth Tokens & Redirect URLs**, generate a bot user OAuth token and paste it into config.json as seen below.
-```
-"slackAuth":"Paste your bot user OAuth token here"
-```
-Navigate back to your Slack workspace and [create a channel](https://slack.com/help/articles/201402297-Create-a-channel) for server logs. Click on the channel and the URL will be formatted as https://app.slack.com/client/T012345/C012345. In this case the channel ID will be C012345. Paste this channelID into the section of config.json as seen below.
-```
-"successChannelID":"Paste the channel ID for logs here"
-```
-Create another channel for error logs and do the same as above but paste it into the errorChannelID
-```
-"errorChannelID":"Paste the channel ID for errors here"
-```
+1. On the same page under the section **OAuth Tokens & Redirect URLs**, generate a bot user OAuth token and paste it into config.json as seen below.
+    ```
+    "slackAuth":"Paste your bot user OAuth token here"
+    ```
+1. Navigate back to your Slack workspace and [create a channel](https://slack.com/help/articles/201402297-Create-a-channel) for server logs. Click on the channel and the URL will be formatted as https://app.slack.com/client/T012345/C012345. In this case the channel ID will be C012345. Paste this channelID into the section of config.json as seen below.
+    ```
+    "successChannelID":"Paste the channel ID for logs here"
+    ```
+1. Create another channel for error logs and do the same as above but paste it into the errorChannelID
+    ```
+    "errorChannelID":"Paste the channel ID for errors here"
+    ```
 
 ### IBM Translation
-Create or login to your [IBM Cloud](https://www.ibm.com/cloud) account. 
+1. Create or login to your [IBM Cloud](https://www.ibm.com/cloud) account. 
 
-Go to the [language translator](https://cloud.ibm.com/catalog/services/language-translator) page. Select the location closest to you and the Lite pricing plan, then press create. 
+1. Go to the [language translator](https://cloud.ibm.com/catalog/services/language-translator) page. Select the location closest to you and the Lite pricing plan, then press create. 
 
-Then navigate to [resources](https://cloud.ibm.com/resources) and click on **Languages Translator** under **Services**. 
+1. Navigate to [resources](https://cloud.ibm.com/resources) and click on **Languages Translator** under **Services**. 
 
-Find the **API key** and **service URL** and paste into the section of config.json as seen below
-```
-"apiKeyIBM":"Put in API key for IBM here",
-"IBMserviceURL":Put in the service URL for IBM here"
-```
+1. Find the **API key** and **service URL** and paste into the section of config.json as seen below
+    ```
+    "apiKeyIBM":"Put in API key for IBM here",
+    "IBMserviceURL":Put in the service URL for IBM here"
+    ```
 
 ### Google Translation
-For setting up google cloud translation, follow the steps in the sections **Create or select a project**,**Enable Billing**,**Enabling the API**, and **Create service accounts and keys** in this [guide](https://cloud.google.com/translate/docs/setup). Once you download the JSON following the steps in section **Create service accounts and keys**, move the JSON into the folder of this project, you do not need to modify config for this step. 
+For setting up google cloud translation, in this [guide](https://cloud.google.com/translate/docs/setup) follow the steps in the sections 
+* **Create or select a project**
+* **Enable Billing**
+* **Enabling the API**
+* **Create service accounts and keys** 
+
+Once you download the JSON after the steps in section **Create service accounts and keys**, move the JSON into the folder of this project, you do not need to modify config for this step. 
 
 ### Firebase Functions
 WIP
