@@ -1,5 +1,17 @@
 # airtable_translation
 
+## Services
+
+[Airtable](https://airtable.com/) is used to store all the data and manage it in a spreadsheet format. It will be where all the information will be stored and where all the translations will be pushed to.
+
+[Slack](https://slack.com/) is used as a notification system for the translator. Notifications of successful translations or any flagged translations will be sent to the channels in Slack.
+
+[IBM Language Translator](https://www.ibm.com/watson/services/language-translator/) is used to provide translation services alongside Google. 
+
+[Google Cloud Translation](https://cloud.google.com/translate) is used to provide translation services alongside IBM.
+
+[Firebase](https://firebase.google.com/) is used to schedule when the translations should be run (e.g. daily, weekly, etc). 
+
 ## Setting up
 To setup this translation script, you will need to follow the setup guides for the following. All API keys, IDs, etc will be stored in a file called config.json. To create it, make a copy template_config.json and rename the file to config.json. In this file, you will be setting all the information needed to get this script working. See below for specifics on setting up all necessary accounts filling out the information for the config.
 
@@ -93,6 +105,14 @@ WIP
 
 ### Running using Firebase Functions
 
+## Costs
+The two services that may incur costs are the translation services. This script uses Google and IBM's cloud translation which each have a monthly limit on the number of characters translated. For google, this capacity is **500,000 characters per month**, and for IBM the capacity is **1,000,000 characters per month**. As of now, the script will first run Google's translation service until config["googleMonthlyCutOff"] * 500,000 characters has been surpassed, at which point it will switch over to IBM. This is done in order to maximize the number of free translations that are possible. 
+
+[Google Pricing](https://cloud.google.com/translate/pricing)
+
+[IBM Pricing](https://www.ibm.com/watson/services/language-translator/)
+
+## Advanced User Guide
 ### Running manually
 To run the script manually you will need to install node which you can do [here](https://nodejs.org/en/download/)
 
@@ -115,10 +135,3 @@ Once that is finished, simply type
 node translator.ts
 ```
 in order to run the script manually. 
-## Costs
-The two services that may incur costs are the translation services. This script uses Google and IBM's cloud translation which each have a monthly limit on the number of characters translated. For google, this capacity is **500,000 characters per month**, and for IBM the capacity is **1,000,000 characters per month**. As of now, the script will first run Google's translation service until config["googleMonthlyCutOff"] * 500,000 characters has been surpassed, at which point it will switch over to IBM. This is done in order to maximize the number of free translations that are possible. 
-
-[Google Pricing](https://cloud.google.com/translate/pricing)
-
-[IBM Pricing](https://www.ibm.com/watson/services/language-translator/)
-
