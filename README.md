@@ -102,7 +102,11 @@ For setting up google cloud translation, in this [guide](https://cloud.google.co
 * **Enabling the API**
 * **Create service accounts and keys** 
 
-Once you download the JSON after the steps in section **Create service accounts and keys**, move the JSON into the folder of this project, you do not need to modify config for this step. 
+After completing the section **Create service accounts and keys**, go to the section **Creating service account keys** in this other [guide](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). Follow steps 3-6 and make sure on Step 6 to choose the type as **JSON**. 
+
+Once you download the JSON after step 6, create a copy of it and store it somewhere safe as **you will not be able to download it again**. Then rename the JSON to **google-services.json**. 
+
+Move the JSON into the folder of this project, you do not need to modify config for this step. 
 
 ### Firebase Functions
 WIP
