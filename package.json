@@ -1,4 +1,8 @@
 {
+  "name":"airtable-translation",
+  "author":"Ray Onishi",
+  "contributors":["Jonathan Chin"],
+  "license":"UNLICENSED",
   "dependencies": {
     "@google-cloud/translate": "^6.0.3",
     "@slack/web-api": "^6.0.0",
