@@ -19,10 +19,57 @@ class Translator{
   // * manual overrides explained
   // * all formatting issues that were dealt with (quotations, markdown urls, markdown bullet points) (could be more issues)
 
-  // https://support.airtable.com/hc/en-us/articles/218324867-Can-I-make-my-own-templates-
+  // Airtable scheduled run scripts (possible future todo)
+  // https://support.airtable.com/hc/en-us/articles/1500001756941-At-a-scheduled-time-automation-trigger#h_01EWG8FWWJVCTH4ZAGXGBZRBVQ
+  // https://support.airtable.com/hc/en-us/articles/360051792333-Run-a-script-Action-
 
-  // https://cloud.google.com/translate/docs/setup
+  /* idea for translating w md breakdown
+    note for self:
+    current translation groups up a bunch of text to translate into one arr (which is pushed into text which holds all the arrays to translate)
+    e.g. ["hello world","this is text for another record"]
+    and since google translates arrays in the order it was given, we put it into resultArr in same order
+    issue is if we break up the translations into markdown there is no easy way to rebuild resultArr since we can't
+    just break down the record into chunks the same way since no way to distinguish bits of records
 
+    easiest solution is to only translate one record at a time instead of sending multiple records at once to translate
+    but could be inefficient (not sure if doing more api calls to google is more costly/slower)
+
+    other solution if still trying to translate multiple records at once would be to preserve the indexes
+    of end of each record so that theres a way to tell when we're done translating one record to combine
+    and push to result arr
+    possible implementation:
+    currently each index of text is holding just an array of things to translate
+    e.g.
+    pretend md obj is for first record
+    {md:":1-2-3: :1-2-4: :1-2-5:",
+      values:{
+        ":1-2-3:":"first record begins",
+        etc
+
+    }}
+    for second record
+    {md:":2-3-4:",
+      values:{
+        ":2-3-4:":"new record here",
+    }}
+    make text into an array of objects where each obj is
+    {
+      locations:["rec123ABC:1-2-3:","rec123ABC:1-2-4:",":1-2-5:",":2-3-4:"]
+      toTranslate:["first record begin","some stuff between","first record end","new record here"]
+      indexes:[2,3] (where the indexes point to the end of each record)
+      template:[":1-2-3: :1-2-4: :1-2-5:",":2-3-4:"]
+    }
+    can check in the translations.foreach loop by adding a variable to keep track of what index we translated
+    since order is preserved when google translating
+    if we reach the end index then we know to rebuild that md using relevant indexes in locations arr of text since indexes match
+    push to resultarr when we do the template things so that index in resultarr matches with index in template field
+
+    POSSIBLE OTHER solution
+      change the replacement id/identifier with one that ocntains the record id, since google translate has a 128 strings limit
+      doing so would let us break up records into chunks without worrying about losing track of what it belongs to
+      would need to store the record id with the template for that record as well somewhere
+      
+  */
   // ibm
   // create an account @ https://www.ibm.com/cloud
   // https://cloud.ibm.com/apidocs/language-translator?code=node
@@ -190,6 +237,8 @@ class Translator{
       charCount += element["text"].length;
       numCharsTranslated += element["text"].length;
       temp.push(element["text"]);
+      // text => [temp1, temp2]
+      // temp => ["record one text","record two text"]
     });
     try {
       // Call the chat.postMessage method using the WebClient
