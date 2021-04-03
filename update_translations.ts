@@ -68,8 +68,13 @@ class Translator{
       change the replacement id/identifier with one that ocntains the record id, since google translate has a 128 strings limit
       doing so would let us break up records into chunks without worrying about losing track of what it belongs to
       would need to store the record id with the template for that record as well somewhere
-      
+
   */
+
+  // NOTE ABOUT SECTION ON COUNTING CHARACTERS FOR GOOGLE
+  // Need to change the formattedDate to be a config parameter for the future
+  // Formatting for the date needs to match the formatting in airtable count table
+  
   // ibm
   // create an account @ https://www.ibm.com/cloud
   // https://cloud.ibm.com/apidocs/language-translator?code=node
