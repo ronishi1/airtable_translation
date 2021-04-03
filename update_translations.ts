@@ -74,7 +74,7 @@ class Translator{
   // NOTE ABOUT SECTION ON COUNTING CHARACTERS FOR GOOGLE
   // Need to change the formattedDate to be a config parameter for the future
   // Formatting for the date needs to match the formatting in airtable count table
-  
+
   // ibm
   // create an account @ https://www.ibm.com/cloud
   // https://cloud.ibm.com/apidocs/language-translator?code=node
@@ -376,6 +376,8 @@ class Translator{
     translation = translation.replace(/\n-(\S)/g,'\n- $1')
     translation = translation.replace(/[「」]/g,"\"")
     translation = translation.replace(/[“”]/g,"\"")
+    translation = translation.replace(/\u{FF08}/u,"(")
+    translation = translation.replace(/\u{FF09}/u,")")
     // Gets rid of spaces for url formatting between [Website] (www.website.com) into [Website](www.website.com) for markdown formatting
     const markdownURLRegex = /\[([\w\s\d]+)\]\s?\((https?:\/\/[^\)]*)\)/g;
     let match = markdownURLRegex.exec(translation);
