@@ -120,6 +120,7 @@ class Translator{
 
   update_translations(language,table,countID){
     let translateArr = [];
+    let flagArr = [];
     let flagRecordArr = [];
     let flagStr = "";
     let filterStr = "OR(";
@@ -136,9 +137,9 @@ class Translator{
         // airtable has some difference between a list and lookup lists that prevents search from working properly
         filterByFormula: `and(search(\"${language}\",
         ARRAYJOIN({languages})) > 0,
-        or({${table["lastUpdatedName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedName"]} ${language}},\'s\') > 0),${filterStr})`
-      }).eachPage(function page(records, fetchNextPage) {
-        records.forEach(function(record) {
+        or({${table["lastUpdatedName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedName"]} ${language}},\'s\') > 0),${filterStr},{translation status} != "flagged")`
+      }).eachPage((records, fetchNextPage) => {
+        records.forEach((record) => {
           table["fieldsToTranslate"].forEach(async (field) => {
             const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
             if(text != ""){
@@ -152,7 +153,7 @@ class Translator{
 
               else {
                 // assuming that all tables will have an id field
-                if(record.get(this.config["overrideName"])){
+                if(record.get("translation status") == "manual override"){
                   translateArr.push({
                     "id":record["id"],
                     "field":field,
@@ -165,6 +166,10 @@ class Translator{
                       channel: this.config["errorChannelID"],
                       text: `Automatic Translations \n${table["name"]}\n${language} ${text.length}/${table["FPCmaxTranslateLength"]} https://airtable.com/${table["tableID"]}/${table["viewID"]}/${record["id"]}`,
                     });
+                    flagArr.push({
+                      "id":record["id"],
+                      "fields":{"translation status":"flagged"}
+                    })
                   }
                   // Better error handling/reporting
                   catch (error) {
@@ -182,7 +187,13 @@ class Translator{
       }, async (err)=> {
         const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
         let date = new Date();
-        const formattedDate = date.getFullYear() + " " + monthNames[date.getMonth()];
+        let formattedDate = "";
+        if(date.getMonth()<9){
+          formattedDate = date.getFullYear() + "/0" + (date.getMonth()+1) + " " + monthNames[date.getMonth()].slice(0,3);
+        }
+        else {
+          formattedDate = date.getFullYear() + "/" + (date.getMonth()+1) + " " + monthNames[date.getMonth()].slice(0,3);
+        }
         let sumGoogle = 0;
         let sumIBM = 0;
         this.base(this.config["countTableID"]).select({
@@ -203,10 +214,10 @@ class Translator{
         }, async (err) => {
           // googleMonthlyCutoff is the percentage of google's maximum character limit to translate to
           if(sumGoogle > 500000 * this.config["googleMonthlyCutoff"] && !(this.unsupportedIBM.includes(language))){
-            await this.translate_text_ibm(translateArr,language,table,table["name"],countID)
+            await this.translate_text_ibm(translateArr,language,table,table["name"],countID,flagArr)
           }
           else {
-            await this.translate_text_google(translateArr,language,table,table["name"],countID)
+            await this.translate_text_google(translateArr,language,table,table["name"],countID,flagArr)
           }
           if (err) { console.error(err); return; }
         });
@@ -218,7 +229,7 @@ class Translator{
 
   // IBM WATSON TRANSLATION CHAR LIMIT IS ABOUT 12800 CHARACTERS
   // Input text in UTF-8 encoding. Submit a maximum of 50 KB (51,200 bytes) of text with a single request. Multiple elements result in multiple translations in the response
-  async translate_text_ibm(translateArr,language,table,name,countID){
+  async translate_text_ibm(translateArr,language,table,name,countID,flagArr){
     if (translateArr.length == 0){
       console.error("ERROR: translate array is empty");
       const result = await this.client.chat.postMessage({
@@ -295,10 +306,10 @@ class Translator{
 
 
     };
-    this.build_update(translateArr,resultArr,language,table);
+    this.build_update(translateArr,resultArr,language,table,flagArr);
   }
 
-  async translate_text_google(translateArr,language,table,name,countID){
+  async translate_text_google(translateArr,language,table,name,countID,flagArr){
     if (translateArr.length == 0){
       console.error("ERROR: translate array is empty");
       const result = await this.client.chat.postMessage({
@@ -363,7 +374,7 @@ class Translator{
       });
 
     };
-    this.build_update(translateArr,resultArr,language,table);
+    this.build_update(translateArr,resultArr,language,table,flagArr);
   }
 
   fixFormatting(translation){
@@ -393,7 +404,7 @@ class Translator{
     return translation;
   }
 
-  build_update(translateArr,resultArr,language,table){
+  build_update(translateArr,resultArr,language,table,flagArr){
     let finalUpdateObj = {};
     let updateObj = {}
     for(var i = 0;i<resultArr.length;i++){
@@ -405,7 +416,7 @@ class Translator{
         // TODO:
         // Check if we need to generalize Last Updated + Language since we specify last updated in config
         updateObj["fields"][table["lastUpdatedName"] + " " + language] = new Date();
-        updateObj["fields"][this.config["overrideName"]] = false;
+        updateObj["fields"]["translation status"] = null;
         finalUpdateObj[translateArr[i]["id"]] = updateObj;
       }
       else {
@@ -413,17 +424,16 @@ class Translator{
       }
     }
 
-    this.update_airtable(Object.values(finalUpdateObj),table);
+    this.update_airtable(Object.values(finalUpdateObj),table,flagArr);
   }
 
-  update_airtable(updateArr,table){
+  update_airtable(updateArr,table,flagArr){
     let allChunks = [];
     let temp = [];
     for (let i=0;i<updateArr.length;i+= this.update_chunk_size) {
       temp= updateArr.slice(i,i+ this.update_chunk_size);
       allChunks.push(temp);
     }
-
     allChunks.forEach((chunk) => {
       this.base(table["tableID"]).update(chunk, function(err, records) {
         if (err) {
@@ -432,6 +442,13 @@ class Translator{
         };
       });
     })
+
+    this.base(table["tableID"]).update(flagArr, function(err, records) {
+      if (err) {
+        console.error(err);
+        return;
+      };
+    });
     // console.log("done " + table);
   }
 

@@ -6,7 +6,6 @@
   "errorChannelID":"CHANNEL ID FOR ERRORS HERE",
   "successChannelID":"CHANNEL ID FOR SUCCESS HERE",
   "slackAuth":"slack auth token here",
-  "overrideName":"column name for override checkbox",
   "countTableID":"table id to keep track of total characters translated monthly",
   "googleMonthlyCutoff":.9,
   "apiKeyIBM":"APIKEY FOR IBM HERE",
