@@ -7,18 +7,19 @@
   "successChannelID":"CHANNEL ID FOR SUCCESS HERE",
   "slackAuth":"slack auth token here",
   "countTableID":"table id to keep track of total characters translated monthly",
-  "googleMonthlyCutoff":.9,
+  "googleMonthlyCutoff":0.9,
   "apiKeyIBM":"APIKEY FOR IBM HERE",
   "IBMserviceURL":"service url for ibm here https://cloud.ibm.com/apidocs/language-translator?code=node#endpoint-cloud",
   "tables":[
     {
-      "languages":["Spanish"],
-      "fieldsToTranslate":["Additional Notes"],
-      "lastUpdatedName":"Last Updated FPC",
-      "tableID":"id of table",
-      "viewID":"view of the table",
-      "name":"name of table",
-      "FPCmaxTranslateLength":0,
+      "languages":["Spanish","Chinese"],
+      "fieldsToTranslate":["[Field to Translate 1]"],
+      "lastUpdatedName":"[Last Updated]",
+      "lastUpdatedLanguageName":"[Last Updated Language Name]",
+      "tableID":"Paste your tableID here",
+      "viewID":"Paste your viewID here",
+      "name":"Translation Table 1",
+      "FPCmaxTranslateLength":350,
       "maxRecords":5
     }
   ]

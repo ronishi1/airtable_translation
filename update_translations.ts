@@ -137,7 +137,7 @@ class Translator{
         // airtable has some difference between a list and lookup lists that prevents search from working properly
         filterByFormula: `and(search(\"${language}\",
         ARRAYJOIN({languages})) > 0,
-        or({${table["lastUpdatedName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedName"]} ${language}},\'s\') > 0),${filterStr},{translation status} != "flagged")`
+        or({${table["lastUpdatedLanguageName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedLanguageName"]} ${language}},\'s\') > 0),${filterStr},{translation status} != "flagged")`
       }).eachPage((records, fetchNextPage) => {
         records.forEach((record) => {
           table["fieldsToTranslate"].forEach(async (field) => {
@@ -415,7 +415,7 @@ class Translator{
         updateObj["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
         // TODO:
         // Check if we need to generalize Last Updated + Language since we specify last updated in config
-        updateObj["fields"][table["lastUpdatedName"] + " " + language] = new Date();
+        updateObj["fields"][table["lastUpdatedLanguageName"] + " " + language] = new Date();
         updateObj["fields"]["translation status"] = null;
         finalUpdateObj[translateArr[i]["id"]] = updateObj;
       }
