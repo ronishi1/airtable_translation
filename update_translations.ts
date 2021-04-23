@@ -443,12 +443,14 @@ class Translator{
       });
     })
 
+    if(flagArr.length > 0){
     this.base(table["tableID"]).update(flagArr, function(err, records) {
       if (err) {
         console.error(err);
         return;
       };
     });
+    }
     // console.log("done " + table);
   }
 
