@@ -236,6 +236,7 @@ class Translator{
         channel: this.config["successChannelID"],
         text: `Automatic Translations \n ${name}\n ${language}\n Total Records Translated 0 \n Total Characters Translated 0`,
       });
+      this.build_update(translateArr,[],language,table,flagArr);
       return;
     }
     let text = [];
@@ -316,6 +317,7 @@ class Translator{
         channel: this.config["successChannelID"],
         text: `Automatic Translations \n ${name}\n ${language}\nTotal Records Translated 0 \n Total Characters Translated 0`,
       });
+      this.build_update(translateArr,[],language,table,flagArr);
       return;
     }
     let text = [];
@@ -407,49 +409,56 @@ class Translator{
   build_update(translateArr,resultArr,language,table,flagArr){
     let finalUpdateObj = {};
     let updateObj = {}
-    for(var i = 0;i<resultArr.length;i++){
-      if(!finalUpdateObj[translateArr[i]["id"]]){
-        updateObj = {};
-        updateObj["id"] = translateArr[i]["id"];
-        updateObj["fields"] = {};
-        updateObj["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
-        // TODO:
-        // Check if we need to generalize Last Updated + Language since we specify last updated in config
-        updateObj["fields"][table["lastUpdatedLanguageName"] + " " + language] = new Date();
-        updateObj["fields"]["translation status"] = null;
-        finalUpdateObj[translateArr[i]["id"]] = updateObj;
-      }
-      else {
-        finalUpdateObj[translateArr[i]["id"]]["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
-      }
+    if(resultArr.length == 0){
+      this.update_airtable([],table,flagArr);
     }
+    else {
+      for(var i = 0;i<resultArr.length;i++){
+        if(!finalUpdateObj[translateArr[i]["id"]]){
+          updateObj = {};
+          updateObj["id"] = translateArr[i]["id"];
+          updateObj["fields"] = {};
+          updateObj["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
+          // TODO:
+          // Check if we need to generalize Last Updated + Language since we specify last updated in config
+          updateObj["fields"][table["lastUpdatedLanguageName"] + " " + language] = new Date();
+          updateObj["fields"]["translation status"] = null;
+          finalUpdateObj[translateArr[i]["id"]] = updateObj;
+        }
+        else {
+          finalUpdateObj[translateArr[i]["id"]]["fields"][translateArr[i]["field"] + " " + language] = resultArr[i];
+        }
+      }
 
-    this.update_airtable(Object.values(finalUpdateObj),table,flagArr);
+      this.update_airtable(Object.values(finalUpdateObj),table,flagArr);
+    }
   }
 
   update_airtable(updateArr,table,flagArr){
     let allChunks = [];
     let temp = [];
-    for (let i=0;i<updateArr.length;i+= this.update_chunk_size) {
-      temp= updateArr.slice(i,i+ this.update_chunk_size);
-      allChunks.push(temp);
+    if(updateArr.length > 0){
+      for (let i=0;i<updateArr.length;i+= this.update_chunk_size) {
+        temp= updateArr.slice(i,i+ this.update_chunk_size);
+        allChunks.push(temp);
+      }
+      allChunks.forEach((chunk) => {
+        this.base(table["tableID"]).update(chunk, function(err, records) {
+          if (err) {
+            console.error(err);
+            return;
+          };
+        });
+      })
     }
-    allChunks.forEach((chunk) => {
-      this.base(table["tableID"]).update(chunk, function(err, records) {
+
+    if(flagArr.length > 0){
+      this.base(table["tableID"]).update(flagArr, function(err, records) {
         if (err) {
           console.error(err);
           return;
         };
       });
-    })
-
-    if(flagArr.length > 0){
-    this.base(table["tableID"]).update(flagArr, function(err, records) {
-      if (err) {
-        console.error(err);
-        return;
-      };
-    });
     }
     // console.log("done " + table);
   }
