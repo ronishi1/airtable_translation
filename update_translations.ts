@@ -212,13 +212,23 @@ class Translator{
           fetchNextPage();
 
         }, async (err) => {
-          // googleMonthlyCutoff is the percentage of google's maximum character limit to translate to
+            // googleMonthlyCutoff is the percentage of google's maximum character limit to translate to
+
+
+
+
+	    await this.translate_text_google(translateArr,language,table,table["name"],countID,flagArr)
+
+	    ///////////////////////////////
+	    // why is IBM bugged?
+	    /*
           if(sumGoogle > 500000 * this.config["googleMonthlyCutoff"] && !(this.unsupportedIBM.includes(language))){
             await this.translate_text_ibm(translateArr,language,table,table["name"],countID,flagArr)
           }
           else {
             await this.translate_text_google(translateArr,language,table,table["name"],countID,flagArr)
           }
+	    */
           if (err) { console.error(err); return; }
         });
         resolve();
