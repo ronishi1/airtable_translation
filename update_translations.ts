@@ -216,8 +216,15 @@ class Translator{
 
 
 
-
-	    await this.translate_text_google(translateArr,language,table,table["name"],countID,flagArr)
+      if(sumGoogle < 500000){
+	       await this.translate_text_google(translateArr,language,table,table["name"],countID,flagArr)
+      }
+      else {
+        const result = await this.client.chat.postMessage({
+          channel: this.config["successChannelID"],
+          text: `Google translate 500000 limit has been reached `,
+        });
+      }
 
 	    ///////////////////////////////
 	    // why is IBM bugged?
