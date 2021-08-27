@@ -129,6 +129,15 @@ class Translator{
     });
     filterStr = filterStr.substring(0,filterStr.length-1);
     filterStr += ")"
+
+    // IMPORTANT NOTE
+    // CODE BELOW IS SPECIFIC TO FPC RELATED AIRTABLE
+    // IGNORE IF NOT FPC
+    let pantryFilter = "";
+    if(table["name"] == "Food Pantries"){
+        pantryFilter = 'NOT({Source FINAL} = "Plentiful"),'
+    }
+    // ************************
     return new Promise((resolve, reject) => {
       this.base(table["tableID"]).select({
         maxRecords: table["maxRecords"],
@@ -137,11 +146,12 @@ class Translator{
         // airtable has some difference between a list and lookup lists that prevents search from working properly
         filterByFormula: `and(search(\"${language}\",
         ARRAYJOIN({languages})) > 0,
-        or({${table["lastUpdatedLanguageName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedLanguageName"]} ${language}},\'s\') > 0),${filterStr},{translation status} != "flagged")`
+        or({${table["lastUpdatedLanguageName"]} ${language}} = BLANK(),datetime_diff({${table["lastUpdatedName"]}},{${table["lastUpdatedLanguageName"]} ${language}},\'s\') > 0),${filterStr},${pantryFilter}{translation status} != "flagged")`
       }).eachPage((records, fetchNextPage) => {
         records.forEach((record) => {
           table["fieldsToTranslate"].forEach(async (field) => {
             const text = typeof record.get(field) == 'undefined' ? "" : record.get(field).trim()
+            console.log(record.get("Source FINAL"))
             if(text != ""){
               if(text.length < table["FPCmaxTranslateLength"]){
                 translateArr.push({
